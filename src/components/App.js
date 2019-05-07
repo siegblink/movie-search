@@ -1,18 +1,18 @@
-import React, { useReducer, useEffect } from 'react';
+import React, { useReducer, useEffect } from 'react'
 
-import '../App.css';
-import key from '../api/key';
-import Header from './Header';
-import Movie from './Movie';
-import Search from './Search';
+import '../App.css'
+import key from '../api/key'
+import Header from './Header'
+import Movie from './Movie'
+import Search from './Search'
 
-const MOVIE_API_URL = `https://www.omdbapi.com/?s=man&apikey=${key.secret}`; // you should replace this with yours
+const MOVIE_API_URL = `https://www.omdbapi.com/?s=man&apikey=${key.secret}` // you should replace this with yours
 
 const initialState = {
   loading: true,
   movies: [],
-  errorMessage: null
-};
+  errorMessage: null,
+}
 
 const reducer = (state, action) => {
   switch (action.type) {
@@ -20,30 +20,30 @@ const reducer = (state, action) => {
       return {
         ...state,
         loading: true,
-        errorMessage: null
-      };
+        errorMessage: null,
+      }
 
     case 'SEARCH_MOVIES_SUCCESS':
       return {
         ...state,
         loading: false,
-        movies: action.payload
-      };
+        movies: action.payload,
+      }
 
     case 'SEARCH_MOVIES_FAILURE':
       return {
         ...state,
         loading: false,
-        errorMessage: action.error
-      };
+        errorMessage: action.error,
+      }
 
     default:
-      return state;
+      return state
   }
-};
+}
 
 const App = () => {
-  const [state, dispatch] = useReducer(reducer, initialState);
+  const [state, dispatch] = useReducer(reducer, initialState)
 
   useEffect(() => {
     fetch(MOVIE_API_URL)
@@ -51,15 +51,15 @@ const App = () => {
       .then(jsonResponse => {
         dispatch({
           type: 'SEARCH_MOVIES_SUCCESS',
-          payload: jsonResponse.Search
-        });
-      });
-  }, []);
+          payload: jsonResponse.Search,
+        })
+      })
+  }, [])
 
   const search = searchValue => {
     dispatch({
-      type: 'SEARCH_MOVIES_REQUEST'
-    });
+      type: 'SEARCH_MOVIES_REQUEST',
+    })
 
     fetch(`https://www.omdbapi.com/?s=${searchValue}&apikey=4a3b711b`)
       .then(response => response.json())
@@ -67,31 +67,31 @@ const App = () => {
         if (jsonResponse.Response === 'True') {
           dispatch({
             type: 'SEARCH_MOVIES_SUCCESS',
-            payload: jsonResponse.Search
-          });
+            payload: jsonResponse.Search,
+          })
         } else {
           dispatch({
             type: 'SEARCH_MOVIES_FAILURE',
-            error: jsonResponse.Error
-          });
+            error: jsonResponse.Error,
+          })
         }
-      });
-  };
+      })
+  }
 
-  const { movies, errorMessage, loading } = state;
+  const { movies, errorMessage, loading } = state
 
   return (
-    <div className="App">
-      <Header text="HOOKED" />
+    <div className='App'>
+      <Header text='OMDB' />
       <Search search={search} />
 
-      <p className="App-intro">Sharing a few of our favourite movies</p>
+      <p className='App-intro'>Sharing a few of our favourite movies</p>
 
-      <div className="movies">
+      <div className='movies'>
         {loading && !errorMessage ? (
           <span>loading... </span>
         ) : errorMessage ? (
-          <div className="errorMessage">{errorMessage}</div>
+          <div className='errorMessage'>{errorMessage}</div>
         ) : (
           movies.map((movie, index) => (
             <Movie key={`${index}-${movie.Title}`} movie={movie} />
@@ -99,7 +99,7 @@ const App = () => {
         )}
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default App;
+export default App

@@ -31,6 +31,7 @@
 }
 .App-header h2 {
   margin: 0;
+  align-self: flex-start;
 }
 .add-movies {
   text-align: center;
