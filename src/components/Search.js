@@ -1,25 +1,35 @@
 import React, { useState } from 'react'
+import Button from './Button'
 
-const Search = props => {
+const Search = ({ search }) => {
+  const enabledStyle = {
+    borderRadius: '4px',
+    border: 'none',
+    backgroundColor: '#5f27cd',
+    color: 'white',
+  }
+
+  const disabledStyle = {
+    borderRadius: '4px',
+    border: 'none',
+    backgroundColor: '#576574',
+    color: 'white',
+  }
+
   const [searchValue, setSearchValue] = useState('')
-  const [disableButton, setDisableButton] = useState(true)
 
   const handleSearchInputChanges = e => {
     setSearchValue(e.target.value)
-    // enable the search button when the input box have a value
-    setDisableButton(false)
   }
 
   const resetInputField = () => {
     setSearchValue('')
   }
 
-  const callSearchFunction = e => {
+  const callSearch = e => {
     e.preventDefault()
-    props.search(searchValue)
+    search(searchValue)
     resetInputField()
-    // disable the search button after clicking the button
-    setDisableButton(true)
   }
 
   return (
@@ -29,12 +39,19 @@ const Search = props => {
         onChange={handleSearchInputChanges}
         type='text'
       />
-      <input
-        onClick={callSearchFunction}
-        type='submit'
-        value='SEARCH'
-        disabled={disableButton}
-      />
+      {searchValue ? (
+        <Button
+          inputState={false}
+          style={enabledStyle}
+          callSearch={callSearch}
+        />
+      ) : (
+        <Button
+          inputState={true}
+          style={disabledStyle}
+          callSearch={callSearch}
+        />
+      )}
     </form>
   )
 }
