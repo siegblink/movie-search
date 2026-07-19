@@ -6,7 +6,14 @@ import Header from './Header'
 import Movie from './Movie'
 import Search from './Search'
 
-const MOVIE_API_URL = `https://www.omdbapi.com/?s=man&apikey=${key.secret}` // you should replace this with yours
+const DEFAULT_SEARCH = 'man'
+const NETWORK_ERROR = 'Could not reach OMDB. Check your connection and try again.'
+
+const searchUrl = searchValue => {
+  const term = encodeURIComponent(searchValue)
+
+  return `https://www.omdbapi.com/?s=${term}&apikey=${key.secret}`
+}
 
 const initialState = {
   loading: true,
@@ -45,23 +52,8 @@ const reducer = (state, action) => {
 const App = () => {
   const [state, dispatch] = useReducer(reducer, initialState)
 
-  useEffect(() => {
-    fetch(MOVIE_API_URL)
-      .then(response => response.json())
-      .then(jsonResponse => {
-        dispatch({
-          type: 'SEARCH_MOVIES_SUCCESS',
-          payload: jsonResponse.Search,
-        })
-      })
-  }, [])
-
-  const search = searchValue => {
-    dispatch({
-      type: 'SEARCH_MOVIES_REQUEST',
-    })
-
-    fetch(`https://www.omdbapi.com/?s=${searchValue}&apikey=${key.secret}`)
+  const fetchMovies = searchValue => {
+    fetch(searchUrl(searchValue))
       .then(response => response.json())
       .then(jsonResponse => {
         if (jsonResponse.Response === 'True') {
@@ -76,6 +68,24 @@ const App = () => {
           })
         }
       })
+      .catch(() => {
+        dispatch({
+          type: 'SEARCH_MOVIES_FAILURE',
+          error: NETWORK_ERROR,
+        })
+      })
+  }
+
+  useEffect(() => {
+    fetchMovies(DEFAULT_SEARCH)
+  }, [])
+
+  const search = searchValue => {
+    dispatch({
+      type: 'SEARCH_MOVIES_REQUEST',
+    })
+
+    fetchMovies(searchValue)
   }
 
   const { movies, errorMessage, loading } = state
