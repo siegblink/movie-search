@@ -99,3 +99,20 @@ it('shows a message when OMDB cannot be reached', async () => {
   expect(container.textContent).toContain('Could not reach OMDB');
   expect(container.textContent).not.toContain('loading');
 });
+
+it('keeps the search button disabled until something is typed', async () => {
+  respondWith({ Response: 'True', Search: [] });
+
+  ReactDOM.render(<App />, container);
+  await settle();
+  const button = container.querySelector('input[type="submit"]');
+
+  expect(button.disabled).toBe(true);
+
+  Simulate.change(container.querySelector('input[type="text"]'), {
+    target: { value: 'batman' },
+  });
+
+  expect(button.disabled).toBe(false);
+  expect(button.style.backgroundColor).toBe('rgb(95, 39, 205)');
+});

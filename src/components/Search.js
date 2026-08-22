@@ -1,21 +1,10 @@
 import React, { useState } from 'react'
 import Button from './Button'
 
+const ENABLED_COLOR = '#5f27cd'
+const DISABLED_COLOR = '#576574'
+
 const Search = ({ search }) => {
-  const enabledStyle = {
-    borderRadius: '4px',
-    border: 'none',
-    backgroundColor: '#5f27cd',
-    color: 'white',
-  }
-
-  const disabledStyle = {
-    borderRadius: '4px',
-    border: 'none',
-    backgroundColor: '#576574',
-    color: 'white',
-  }
-
   const [searchValue, setSearchValue] = useState('')
 
   const handleSearchInputChanges = e => {
@@ -24,6 +13,15 @@ const Search = ({ search }) => {
 
   const resetInputField = () => {
     setSearchValue('')
+  }
+
+  // The button is greyed out and disabled until something is typed
+  const isEmpty = !searchValue
+  const buttonStyle = {
+    borderRadius: '4px',
+    border: 'none',
+    backgroundColor: isEmpty ? DISABLED_COLOR : ENABLED_COLOR,
+    color: 'white',
   }
 
   const callSearch = e => {
@@ -39,19 +37,11 @@ const Search = ({ search }) => {
         onChange={handleSearchInputChanges}
         type='text'
       />
-      {searchValue ? (
-        <Button
-          inputState={false}
-          style={enabledStyle}
-          callSearch={callSearch}
-        />
-      ) : (
-        <Button
-          inputState={true}
-          style={disabledStyle}
-          callSearch={callSearch}
-        />
-      )}
+      <Button
+        inputState={isEmpty}
+        style={buttonStyle}
+        callSearch={callSearch}
+      />
     </form>
   )
 }
